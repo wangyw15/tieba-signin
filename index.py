@@ -1,5 +1,4 @@
 import json
-from multiprocessing.dummy import Array
 from time import sleep
 from typing import Dict, List
 from requests import post, Session
@@ -7,10 +6,12 @@ import logging
 
 handler = logging.StreamHandler()
 handler.setLevel('DEBUG')
-handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)-9s - %(filename)-8s : %(lineno)4s line - %(message)s'))
+handler.setFormatter(logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)-9s - %(filename)-8s : %(lineno)4s line - %(message)s'))
 logger = logging.getLogger('tieba-signin')
 logger.setLevel('DEBUG')
 logger.addHandler(handler)
+
 
 class ForumResult:
     '''
@@ -21,7 +22,8 @@ class ForumResult:
     | -1 | 已签到 |
     | 1 | 出错 |
     '''
-    def __init__(self, code = 0, name = '', description = '', rank = 0, days = 0):
+
+    def __init__(self, code=0, name='', description='', rank=0, days=0):
         self.name = name
         self.description = description
         self.rank = rank
@@ -40,11 +42,13 @@ class ForumResult:
     rank = 0
     days = 0
 
+
 class SigninResult:
     '''
     总签到结果
     '''
-    def __init__(self, code = 0, data: List[ForumResult] = [], auto_signed = 0, already_signed = 0, failed = 0):
+
+    def __init__(self, code=0, data: List[ForumResult] = [], auto_signed=0, already_signed=0, failed=0):
         self.code = code
         self.data = data
         self.auto_signed = auto_signed
@@ -56,6 +60,7 @@ class SigninResult:
     already_signed = 0
     failed = 0
     data: List[ForumResult] = []
+
 
 def signin(account):
     '''
@@ -82,7 +87,8 @@ def signin(account):
     forum_info_resp = sess.get(like_url, headers=head).json()
     if not forum_info_resp['no'] == 0:
         ret.code = 1
-        ret.data.append(ForumResult(1, '获取贴吧列表失败', json.dumps(forum_info_resp)))
+        ret.data.append(ForumResult(
+            1, '获取贴吧列表失败', json.dumps(forum_info_resp)))
         logger.error('获取贴吧列表失败')
         logger.exception(forum_info_resp)
         return ret
@@ -102,8 +108,10 @@ def signin(account):
                 ret.auto_signed += 1
                 forum_result.rank = signin_resp['data']['uinfo']['user_sign_rank']
                 forum_result.days = signin_resp['data']['uinfo']['total_sign_num']
-                logger.info('第%s个签到', signin_resp['data']['uinfo']['user_sign_rank'])
-                logger.info('共签到%s天', signin_resp['data']['uinfo']['total_sign_num'])
+                logger.info(
+                    '第%s个签到', signin_resp['data']['uinfo']['user_sign_rank'])
+                logger.info(
+                    '共签到%s天', signin_resp['data']['uinfo']['total_sign_num'])
             else:
                 ret.failed += 1
                 forum_result.code = 1
@@ -115,7 +123,8 @@ def signin(account):
             forum_result.code = -1
             logger.info('已经签到过了')
         ret.data.append(forum_result)
-    logger.info('共%d个吧，已签到%d个，签到成功%d个，签到失败%d个', len(forum_info_resp['data']['like_forum']), ret.already_signed, ret.auto_signed, ret.failed)
+    logger.info('共%d个吧，已签到%d个，签到成功%d个，签到失败%d个', len(
+        forum_info_resp['data']['like_forum']), ret.already_signed, ret.auto_signed, ret.failed)
     return ret
 
 
@@ -145,6 +154,7 @@ def pushdeer_push(key: str, title: str, content: str):
     else:
         logger.error('PushDeer推送失败')
         logger.exception(resp)
+
 
 def generate_markdown(results: List[SigninResult]):
     '''
@@ -189,7 +199,8 @@ def main():
                         results[push].append(result)
         for i in config['push']:
             if i['name'] in results.keys():
-                content = f"> 推送配置名称：{i['name']}\n\n" + generate_markdown(results[i['name']])
+                content = f"> 推送配置名称：{i['name']}\n\n" + \
+                    generate_markdown(results[i['name']])
                 logger.info(f"推送到{i['name']}")
                 logger.info('推送内容预览')
                 logger.info(content)
@@ -197,6 +208,7 @@ def main():
                     serverchan_push(i['key'], '贴吧自动签到', content)
                 if i['type'] == 'pushdeer':
                     pushdeer_push(i['key'], '贴吧自动签到', content)
+
 
 def main_handler(event, context):
     '''
