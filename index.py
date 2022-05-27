@@ -48,9 +48,12 @@ class SigninResult:
     总签到结果
     '''
 
-    def __init__(self, code=0, data: List[ForumResult] = [], auto_signed=0, already_signed=0, failed=0):
+    def __init__(self, code=0, data: List[ForumResult] = None, auto_signed=0, already_signed=0, failed=0):
         self.code = code
-        self.data = data
+        if data is not None:
+            self.data = data
+        else:
+            self.data = []
         self.auto_signed = auto_signed
         self.already_signed = already_signed
         self.failed = failed
@@ -61,6 +64,11 @@ class SigninResult:
     failed = 0
     data: List[ForumResult] = []
 
+def unicode2chinese(content: str):
+    '''
+    恢复Unicode转义
+    '''
+    return content.encode(encoding='utf-8').decode('unicode_escape')
 
 def signin(account):
     '''
@@ -85,7 +93,7 @@ def signin(account):
     sess = Session()
     # 获取贴吧列表
     forum_info_resp = sess.get(like_url, headers=head).json()
-    if not forum_info_resp['no'] == 0:
+    if forum_info_resp['no'] != 0:
         ret.code = 1
         ret.data.append(ForumResult(
             1, '获取贴吧列表失败', json.dumps(forum_info_resp)))
@@ -178,7 +186,7 @@ def generate_markdown(results: List[SigninResult]):
             ret += '\n'
         else:
             ret += '> 签到失败\n\n'
-            ret += f"```\n{result.data[0].description}\n```\n\n"
+            ret += f"```\n{unicode2chinese(result.data[0].description)}\n```\n\n"
     return ret
 
 
@@ -201,7 +209,7 @@ def main():
             if i['name'] in results.keys():
                 content = f"> 推送配置名称：{i['name']}\n\n" + \
                     generate_markdown(results[i['name']])
-                logger.info(f"推送到{i['name']}")
+                logger.info('推送到%s', i['name'])
                 logger.info('推送内容预览')
                 logger.info(content)
                 if i['type'] == 'serverchan':
