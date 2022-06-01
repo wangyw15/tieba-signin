@@ -1,0 +1,23 @@
+{
+  "name": "tieba-signin",
+  "version": "1.0.0",
+  "description": "Tieba auto signin",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wangyw15/tieba-signin.git"
+  },
+  "author": "wangyw15",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wangyw15/tieba-signin/issues"
+  },
+  "homepage": "https://github.com/wangyw15/tieba-signin#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.36",
+    "node-fetch": "^3.2.4"
+  }
+}
