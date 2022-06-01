@@ -29,4 +29,11 @@ interface ServerChanResponse {
     }
 }
 
-export { PushType, Config, ServerChanResponse };
+interface PushDeerResponse {
+    code: number,
+    content: {
+        result: string[]
+    }
+}
+
+export { PushType, Config, ServerChanResponse, PushDeerResponse };

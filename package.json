@@ -4,8 +4,9 @@
   "description": "Tieba auto signin",
   "main": "index.ts",
   "scripts": {
-    "start": "ts-node index.ts"
+    "start": "node --loader ts-node/esm ./index.ts"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wangyw15/tieba-signin.git"
@@ -18,6 +19,11 @@
   "homepage": "https://github.com/wangyw15/tieba-signin#readme",
   "devDependencies": {
     "@types/node": "^17.0.36",
-    "node-fetch": "^3.2.4"
+    "@types/node-fetch": "^2.6.1"
+  },
+  "dependencies": {
+    "node-fetch": "^3.2.4",
+    "ts-node": "^10.8.0",
+    "typescript": "^4.7.2"
   }
 }
