@@ -64,13 +64,15 @@ class SigninResult:
     failed = 0
     data: List[ForumResult] = []
 
-def unicode2chinese(content: str):
+
+def unicode2chinese(content: str) -> str:
     '''
     恢复Unicode转义
     '''
     return content.encode(encoding='utf-8').decode('unicode_escape')
 
-def signin(account):
+
+def signin(account) -> SigninResult:
     '''
     签到
     '''
@@ -96,7 +98,7 @@ def signin(account):
     if forum_info_resp['no'] != 0:
         ret.code = 1
         ret.data.append(ForumResult(
-            1, '获取贴吧列表失败', json.dumps(forum_info_resp)))
+            1, '获取贴吧列表失败', json.dumps(forum_info_resp, ensure_ascii=False)))
         logger.error('获取贴吧列表失败')
         logger.exception(forum_info_resp)
         return ret
@@ -123,7 +125,7 @@ def signin(account):
             else:
                 ret.failed += 1
                 forum_result.code = 1
-                forum_result.description = json.dumps(signin_resp)
+                forum_result.description = json.dumps(signin_resp, ensure_ascii=False)
                 logger.error('签到失败')
                 logger.exception(signin_resp)
         else:
@@ -136,7 +138,7 @@ def signin(account):
     return ret
 
 
-def serverchan_push(key: str, title: str, content: str):
+def serverchan_push(key: str, title: str, content: str) -> None:
     '''
     Serverchan推送
     '''
@@ -150,7 +152,7 @@ def serverchan_push(key: str, title: str, content: str):
         logger.exception(resp)
 
 
-def pushdeer_push(key: str, title: str, content: str):
+def pushdeer_push(key: str, title: str, content: str) -> None:
     '''
     PushDeer推送
     '''
@@ -164,7 +166,7 @@ def pushdeer_push(key: str, title: str, content: str):
         logger.exception(resp)
 
 
-def generate_markdown(results: List[SigninResult]):
+def generate_markdown(results: List[SigninResult]) -> str:
     '''
     生成Markdown
     '''
@@ -190,7 +192,7 @@ def generate_markdown(results: List[SigninResult]):
     return ret
 
 
-def main():
+def main() -> None:
     '''
     入口
     '''
@@ -218,7 +220,7 @@ def main():
                     pushdeer_push(i['key'], '贴吧自动签到', content)
 
 
-def main_handler(event, context):
+def main_handler(event, context) -> None:
     '''
     云函数默认入口
     '''
