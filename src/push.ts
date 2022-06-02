@@ -1,9 +1,5 @@
-import * as fs from 'fs';
-import * as Types from './dto';
 import fetch from 'node-fetch';
-
-const strConfig = fs.readFileSync('./config.json', 'utf-8');
-const config: Types.Config = JSON.parse(strConfig);
+import * as Types from './dto';
 
 function ServerChanPush(key: string, title: string, content: string) {
     let url = `https://sctapi.ftqq.com/${key}.send`;
